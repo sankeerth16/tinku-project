@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SONAR_SERVER = "SonarQubeServer"   // Name configured in Jenkins
-        SONAR_HOST_URL = "http://54.67.137.14/9000"  // Your SonarQube server IP
+        SONAR_HOST_URL = "http://54.67.137.14:9000"  // Your SonarQube server IP
     }
 
     tools {
@@ -31,8 +31,8 @@ pipeline {
                     sh """
                     mvn sonar:sonar \
                     -Dsonar.projectKey=sonar-demo \
-                    -Dsonar.host.url=${SONAR_HOST_URL} \
-                    -Dsonar.login=YOUR_SONAR_TOKEN
+                    -Dsonar.host.url=$ http://54.67.137.14:9000/\
+                    -Dsonar.login=squ_9e2cc42f6d56ba01d55c8cbebc4309f001820792
                     """
                 }
             }

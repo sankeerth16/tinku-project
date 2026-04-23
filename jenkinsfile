@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    environment {
+        SONAR_SERVER = "SonarQubeServer"   // Name configured in Jenkins
+        SONAR_HOST_URL = "http://54.67.137.14/9000"  // Your SonarQube server IP
+    }
+
+    tools {
+        maven "Maven3"   // Configure in Jenkins
+        jdk "JDK17"
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/<your-username>/sonarqube-jenkins-demo.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean compile'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv("${SONAR_SERVER}") {
+                    sh """
+                    mvn sonar:sonar \
+                    -Dsonar.projectKey=sonar-demo \
+                    -Dsonar.host.url=${SONAR_HOST_URL} \
+                    -Dsonar.login=YOUR_SONAR_TOKEN
+                    """
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+    }
+}

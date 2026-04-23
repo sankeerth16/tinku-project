@@ -15,7 +15,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/<your-username>/sonarqube-jenkins-demo.git'
+                git branch: 'main', url: 'https://github.com/sankeerth16/tinku-project.git'
             }
         }
 

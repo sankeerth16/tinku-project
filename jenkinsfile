@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Replace with your actual local or remote git URL
-                git url: 'https://github.com/your-repo/project.git', branch: 'main'
+                git url: 'https://github.com/sankeerth16/tinku-project.git', branch: 'main'
             }
         }
 

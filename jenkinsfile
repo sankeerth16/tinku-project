@@ -2,45 +2,37 @@ pipeline {
     agent any
 
     environment {
-        SONAR_SERVER = "SonarQubeServer"   // Name configured in Jenkins
-        SONAR_HOST_URL = "http://54.67.137.14:9000"  // Your SonarQube server IP
-    }
-
-    tools {
-        maven "Maven3"   // Configure in Jenkins
-        jdk "JDK17"
+        // The name you gave to the scanner in Jenkins Global Tool Configuration
+        SCANNER_HOME = tool 'sonar-scanner'
     }
 
     stages {
-
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/sankeerth16/tinku-project.git'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh 'mvn clean compile'
+                // Replace with your actual local or remote git URL
+                git url: 'https://github.com/your-repo/project.git', branch: 'main'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv("${SONAR_SERVER}") {
+                // "sonar-server-config" must match the name in Jenkins System Config
+                withSonarQubeEnv('sonar-server-config') {
                     sh """
-                    mvn sonar:sonar \
-                    -Dsonar.projectKey=sonar-demo \
-                    -Dsonar.host.url=$ http://54.67.137.14:9000/\
-                    -Dsonar.login=squ_9e2cc42f6d56ba01d55c8cbebc4309f001820792
+                        ${SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectKey=my-local-project \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://54.90.234.64:9000 \
+                        -Dsonar.login=squ_0620860abd68747cf2697499a7b589adda40770f
                     """
                 }
             }
         }
 
-        stage('Quality Gate') {
+        stage("Quality Gate") {
             steps {
-                timeout(time: 2, unit: 'MINUTES') {
+                timeout(time: 1, unit: 'HOURS') {
+                    // Optional: Forces the pipeline to wait for SonarQube results
                     waitForQualityGate abortPipeline: true
                 }
             }
